@@ -7,6 +7,7 @@
 ##   ├── HealthModule       (Node        + health.gd)
 ##   ├── HurtboxModule      (Area2D      + hurtbox.gd)
 ##   │   └── CollisionShape2D
+##   ├── KnockbackModule    (Node        + knockback.gd)
 ##   ├── WeaponSlot         (Node2D      + weapon_slot.gd)
 ##   │   └── Semiauto       (Node2D      + semiauto.gd)
 ##   └── Visuals            (Node2D)
@@ -18,11 +19,12 @@ extends CharacterBody2D
 const SPEED = 300.0
 const JUMP_VELOCITY = -400.0
 
-@onready var health_module: HealthModule  = $HealthModule
-@onready var hurtbox_module: HurtboxModule = $HurtboxModule
-@onready var weapon_slot: WeaponSlot      = $WeaponSlot
-@onready var visuals: Node2D              = $Visuals
-@onready var muzzle: Marker2D             = $Visuals/Muzzle
+@onready var health_module: HealthModule       = $HealthModule
+@onready var hurtbox_module: HurtboxModule     = $HurtboxModule
+@onready var knockback_module: KnockbackModule = $KnockbackModule
+@onready var weapon_slot: WeaponSlot           = $WeaponSlot
+@onready var visuals: Node2D                   = $Visuals
+@onready var muzzle: Marker2D                  = $Visuals/Muzzle
 
 var facing_direction: int = 1
 
@@ -39,6 +41,7 @@ func _physics_process(delta: float) -> void:
 	_handle_jump()
 	_handle_movement()
 	_handle_shooting()
+	velocity += knockback_module.consume(delta)
 	move_and_slide()
 
 
@@ -46,6 +49,7 @@ func _physics_process(delta: float) -> void:
 
 func _connect_modules() -> void:
 	hurtbox_module.damage_received.connect(health_module.take_damage)
+	hurtbox_module.knockback_received.connect(knockback_module.apply)
 	health_module.died.connect(_on_died)
 
 
