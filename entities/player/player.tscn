@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://bwcm1uuwwl8x3"]
+
+[ext_resource type="Script" uid="uid://blttarxa0nb05" path="res://entities/player/player.gd" id="1_4flbx"]
+[ext_resource type="Script" uid="uid://bl40gkvn0blur" path="res://scripts/health.gd" id="2_onrkg"]
+[ext_resource type="Script" uid="uid://dpert7r64eqjj" path="res://scripts/hurtbox.gd" id="3_i3pqv"]
+[ext_resource type="Script" uid="uid://k1e1826jwngh" path="res://scripts/weapon_slot.gd" id="4_fkugw"]
+[ext_resource type="Script" uid="uid://d3xwaa77vgef5" path="res://weapons/semiauto.gd" id="5_8fjmc"]
+[ext_resource type="PackedScene" uid="uid://dtgjyghhguf3g" path="res://entities/bullets/bullet.tscn" id="6_8fjmc"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sfv1e"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_symyc"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_sfv1e"]
+
+[node name="CharacterBody2D" type="CharacterBody2D" unique_id=931221450]
+collision_layer = 2
+collision_mask = 5
+script = ExtResource("1_4flbx")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1644467577]
+shape = SubResource("RectangleShape2D_sfv1e")
+
+[node name="HealthModule" type="Node" parent="." unique_id=872727780]
+script = ExtResource("2_onrkg")
+
+[node name="HurtboxModule" type="Area2D" parent="." unique_id=1659185148]
+collision_layer = 2
+collision_mask = 20
+script = ExtResource("3_i3pqv")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtboxModule" unique_id=529410401]
+shape = SubResource("RectangleShape2D_symyc")
+
+[node name="WeaponSlot" type="Node2D" parent="." unique_id=812829629]
+script = ExtResource("4_fkugw")
+
+[node name="Semiauto" type="Node2D" parent="WeaponSlot" unique_id=1201163174]
+script = ExtResource("5_8fjmc")
+bullet_scene = ExtResource("6_8fjmc")
+
+[node name="Visuals" type="Node2D" parent="." unique_id=752514249]
+
+[node name="Sprite2D" type="Sprite2D" parent="Visuals" unique_id=961360189]
+scale = Vector2(20, 20)
+texture = SubResource("PlaceholderTexture2D_sfv1e")
+
+[node name="Muzzle" type="Marker2D" parent="Visuals" unique_id=2144258577]
+position = Vector2(10, 0)
