@@ -93,6 +93,13 @@ Connect `HurtboxModule.knockback_received` → `KnockbackModule.apply` in `_read
 Call `knockback_module.consume(delta)` in `_physics_process` before `move_and_slide()`.
 Friction is frame-rate independent via `pow(friction, delta)`. Default: `0.2` (20% remaining after one second).
 
+### `detection.gd` - DetectionModule
+Detects targets within an `Area2D` range and confirms line of sight via `RayCast2D`.
+Emits `target_acquired(target)` when a target enters range with clear line of sight.
+Emits `target_lost` after losing line of sight for longer than `memory_duration` (default 5s).
+During the memory window, `last_known_position` remains available for states to navigate toward.
+Configure the `Area2D` collision mask to `player` only; obstruction mask to `world`.
+
 ### `state.gd` - State
 Base class for all states. Extend with one script per state.
 Implements three overridable methods: `enter(actor)`, `exit()`, and `tick(delta)`.
@@ -134,21 +141,26 @@ Bullet  (Area2D + bullet.gd)
 
 For enemy projectiles, duplicate the scene and change the collision layer to `enemy_bullet` and the mask to `world | player`.
 
-### Enemy.tscn (minimal example)
+### Enemy.tscn
 ```
 Enemy  (CharacterBody2D + enemy.gd)
-├── CollisionShape2D            # Layer: enemy        Mask: world
-├── HealthModule  (Node         + health.gd)
-├── HurtboxModule (Area2D       + hurtbox.gd)
-│   └── CollisionShape2D        # Layer: enemy        Mask: player_bullet
-├── KnockbackModule (Node       + knockback.gd)
-├── StateMachineModule (Node    + state_machine.gd)
-│   └── StateIdle (Node         + state_idle.gd)
+├── CollisionShape2D              # Layer: enemy        Mask: world
+├── HealthModule  (Node           + health.gd)
+├── HurtboxModule (Area2D         + hurtbox.gd)
+│   └── CollisionShape2D          # Layer: enemy        Mask: player_bullet
+├── KnockbackModule (Node         + knockback.gd)
+├── DetectionModule (Node2D       + detection.gd)
+│   ├── Area2D                    # Layer: 0            Mask: player
+│   │   └── CollisionShape2D      # CircleShape2D, configure radius in editor
+│   └── RayCast2D                 # obstruction_mask = world
+├── StateMachineModule (Node      + state_machine.gd)
+│   ├── StateIdle  (Node          + state_idle.gd)
+│   └── StateChase (Node          + state_chase.gd)
 └── Visuals       (Node2D)
     └── Sprite2D
 ```
 
-`enemy.gd` connects modules the same way `player.gd` does. `StateMachineModule` is initialized last in `_ready` with `state_machine.init(self, "StateIdle")`.
+`enemy.gd` connects `DetectionModule.target_acquired` → `_on_target_acquired` and `DetectionModule.target_lost` → `_on_target_lost`, which drive state transitions. `StateMachineModule` is initialized last in `_ready`.
 
 ---
 

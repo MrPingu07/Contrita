@@ -4,12 +4,16 @@
 [ext_resource type="Script" uid="uid://bl40gkvn0blur" path="res://scripts/health.gd" id="1_owq46"]
 [ext_resource type="Script" uid="uid://clejboehlg8b2" path="res://scripts/knockback.gd" id="2_wqcwe"]
 [ext_resource type="Script" uid="uid://dpert7r64eqjj" path="res://scripts/hurtbox.gd" id="3_w4yt1"]
-[ext_resource type="Script" uid="uid://dwim2josdsv4q" path="res://scripts/state_machine.gd" id="4_msovg"]
-[ext_resource type="Script" uid="uid://k36ihistvoll" path="res://scripts/state_idle.gd" id="5_twyc1"]
+[ext_resource type="Script" uid="uid://dwim2josdsv4q" path="res://scripts/states/state_machine.gd" id="4_msovg"]
+[ext_resource type="Script" uid="uid://k36ihistvoll" path="res://scripts/states/state_idle.gd" id="5_twyc1"]
+[ext_resource type="Script" uid="uid://c2j0u1h0koxes" path="res://scripts/states/state_chase.gd" id="7_gj3y3"]
+[ext_resource type="Script" uid="uid://d3ulp6s3pgvxp" path="res://scripts/detection.gd" id="7_ipr6v"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gml8b"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5lf1o"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_w4yt1"]
 
 [sub_resource type="Gradient" id="Gradient_twyc1"]
 colors = PackedColorArray(0.26, 0, 0, 1, 1, 0, 0, 1)
@@ -42,6 +46,19 @@ script = ExtResource("4_msovg")
 
 [node name="StateIdle" type="Node" parent="StateMachineModule" unique_id=1535469687]
 script = ExtResource("5_twyc1")
+
+[node name="StateChase" type="Node" parent="StateMachineModule" unique_id=1054787972]
+script = ExtResource("7_gj3y3")
+
+[node name="DetectionModule" type="Node2D" parent="." unique_id=2012592235]
+script = ExtResource("7_ipr6v")
+
+[node name="Area2D" type="Area2D" parent="DetectionModule" unique_id=193946090]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionModule/Area2D" unique_id=997223261]
+shape = SubResource("CircleShape2D_w4yt1")
+
+[node name="RayCast2D" type="RayCast2D" parent="DetectionModule" unique_id=1473999310]
 
 [node name="Visuals" type="Node2D" parent="." unique_id=24996174]
 
