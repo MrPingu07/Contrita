@@ -6,7 +6,7 @@
 ##   hurtbox_module.knockback_received.connect(knockback_module.apply)
 ##
 ## Uso desde el coordinador en _physics_process:
-##   velocity += knockback_module.consume()
+##   velocity += knockback_module.consume(delta)
 ##
 ## Árbol esperado:
 ##   (cualquier CharacterBody2D)
@@ -23,7 +23,9 @@ signal knockback_applied(impulse: Vector2)
 ## Emitida cuando el impulso decae por debajo del umbral y se cancela.
 signal knockback_finished
 
-## Qué fracción de la velocidad se conserva cada frame (0 = para inmediato, 1 = no decae).
+## Qué fracción de la velocidad se conserva después de 1 segundo completo.
+## Frame-rate independent via pow(friction, delta).
+## 0.0 = para inmediato, 1.0 = no decae nunca.
 @export var friction: float = 0.2
 
 ## Por debajo de esta magnitud el impulso se cancela.
@@ -40,8 +42,6 @@ func apply(direction: Vector2, force: float) -> void:
 
 ## Llama esto desde _physics_process del coordinador y suma el resultado a velocity.
 ## Retorna Vector2.ZERO cuando no hay impulso activo.
-## friction usa pow(friction, delta) para ser frame-rate independent.
-## Un friction de 0.2 significa que queda el 20% del impulso después de 1 segundo.
 func consume(delta: float) -> Vector2:
 	if _impulse.is_zero_approx():
 		return Vector2.ZERO

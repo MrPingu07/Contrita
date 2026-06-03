@@ -1,0 +1,51 @@
+[gd_scene format=3 uid="uid://cinunai7m11lh"]
+
+[ext_resource type="Script" uid="uid://bwx006ilgv4gw" path="res://entities/enemies/enemy.gd" id="1_5lf1o"]
+[ext_resource type="Script" uid="uid://bl40gkvn0blur" path="res://scripts/health.gd" id="1_owq46"]
+[ext_resource type="Script" uid="uid://clejboehlg8b2" path="res://scripts/knockback.gd" id="2_wqcwe"]
+[ext_resource type="Script" uid="uid://dpert7r64eqjj" path="res://scripts/hurtbox.gd" id="3_w4yt1"]
+[ext_resource type="Script" uid="uid://dwim2josdsv4q" path="res://scripts/state_machine.gd" id="4_msovg"]
+[ext_resource type="Script" uid="uid://k36ihistvoll" path="res://scripts/state_idle.gd" id="5_twyc1"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gml8b"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5lf1o"]
+
+[sub_resource type="Gradient" id="Gradient_twyc1"]
+colors = PackedColorArray(0.26, 0, 0, 1, 1, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_w4yt1"]
+gradient = SubResource("Gradient_twyc1")
+fill_from = Vector2(0.5, 1)
+fill_to = Vector2(0.5, 0)
+
+[node name="Enemy" type="CharacterBody2D" unique_id=106410407]
+script = ExtResource("1_5lf1o")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=866140842]
+shape = SubResource("RectangleShape2D_gml8b")
+
+[node name="HealthModule" type="Node" parent="." unique_id=351995480]
+script = ExtResource("1_owq46")
+
+[node name="HurtboxModule" type="Area2D" parent="." unique_id=1259365751]
+script = ExtResource("3_w4yt1")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtboxModule" unique_id=986608190]
+shape = SubResource("RectangleShape2D_5lf1o")
+
+[node name="KnockbackModule" type="Node" parent="." unique_id=116231585]
+script = ExtResource("2_wqcwe")
+
+[node name="StateMachineModule" type="Node" parent="." unique_id=934216810]
+script = ExtResource("4_msovg")
+
+[node name="StateIdle" type="Node" parent="StateMachineModule" unique_id=1535469687]
+script = ExtResource("5_twyc1")
+
+[node name="Visuals" type="Node2D" parent="." unique_id=24996174]
+
+[node name="Sprite2D" type="Sprite2D" parent="Visuals" unique_id=519170068]
+position = Vector2(9.536743e-07, -9.536743e-07)
+scale = Vector2(0.31249997, 0.31249997)
+texture = SubResource("GradientTexture2D_w4yt1")

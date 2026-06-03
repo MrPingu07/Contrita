@@ -87,6 +87,23 @@ Call `prewarm(scene)` during `_ready` of any weapon to avoid the first-frame ins
 Base projectile. Releases itself back to the pool on collision or on `screen_exited`.
 Implements `launch(direction)` and `get_damage()` as required contracts.
 
+### `knockback.gd` - KnockbackModule
+Applies a decaying velocity impulse. Owner-agnostic: emits `knockback_applied(Vector2)` each frame while active; the coordinator sums it into its own `velocity`.
+Connect `HurtboxModule.knockback_received` → `KnockbackModule.apply` in `_ready`.
+Call `knockback_module.consume(delta)` in `_physics_process` before `move_and_slide()`.
+Friction is frame-rate independent via `pow(friction, delta)`. Default: `0.2` (20% remaining after one second).
+
+### `state.gd` - State
+Base class for all states. Extend with one script per state.
+Implements three overridable methods: `enter(actor)`, `exit()`, and `tick(delta)`.
+The `actor` reference is injected by `StateMachineModule` on each transition; states do not reach outside their own scope.
+Use `state_machine.transition_to("StateName")` to trigger transitions from within a state.
+
+### `state_machine.gd` - StateMachineModule
+Orchestrates state transitions. States are direct child nodes of this module.
+Initialize with `state_machine.init(self, "StateIdle")` in the coordinator's `_ready`.
+Call `state_machine.tick(delta)` in `_physics_process`. Emits `state_changed(from, to)` on every transition.
+
 ---
 
 ## Scene Structure
@@ -98,6 +115,7 @@ Player  (CharacterBody2D + player.gd)
 ├── HealthModule  (Node       + health.gd)
 ├── HurtboxModule (Area2D     + hurtbox.gd)
 │   └── CollisionShape2D      # Layer: player        Mask: enemy | enemy_bullet
+├── KnockbackModule (Node     + knockback.gd)
 ├── WeaponSlot    (Node2D     + weapon_slot.gd)
 │   └── Semiauto  (Node2D     + semiauto.gd)
 └── Visuals       (Node2D)
@@ -105,7 +123,7 @@ Player  (CharacterBody2D + player.gd)
     └── Muzzle    (Marker2D)
 ```
 
-`player.gd` connects `HurtboxModule.damage_received` → `HealthModule.take_damage` and `HealthModule.died` → `_on_died` in `_ready`. This is the only place where modules are coupled; the modules themselves have no knowledge of each other.
+`player.gd` connects `HurtboxModule.damage_received` → `HealthModule.take_damage`, `HurtboxModule.knockback_received` → `KnockbackModule.apply`, and `HealthModule.died` → `_on_died` in `_ready`. This is the only place where modules are coupled; the modules themselves have no knowledge of each other.
 
 ### Bullet.tscn
 ```
@@ -119,13 +137,41 @@ For enemy projectiles, duplicate the scene and change the collision layer to `en
 ### Enemy.tscn (minimal example)
 ```
 Enemy  (CharacterBody2D + enemy.gd)
-├── CollisionShape2D          # Layer: enemy          Mask: world
-├── HealthModule  (Node       + health.gd)
-└── HurtboxModule (Area2D     + hurtbox.gd)
-    └── CollisionShape2D      # Layer: enemy          Mask: player_bullet
+├── CollisionShape2D            # Layer: enemy        Mask: world
+├── HealthModule  (Node         + health.gd)
+├── HurtboxModule (Area2D       + hurtbox.gd)
+│   └── CollisionShape2D        # Layer: enemy        Mask: player_bullet
+├── KnockbackModule (Node       + knockback.gd)
+├── StateMachineModule (Node    + state_machine.gd)
+│   └── StateIdle (Node         + state_idle.gd)
+└── Visuals       (Node2D)
+    └── Sprite2D
 ```
 
-`HealthModule` and `HurtboxModule` drop in without modification. The enemy coordinator connects them the same way `player.gd` does.
+`enemy.gd` connects modules the same way `player.gd` does. `StateMachineModule` is initialized last in `_ready` with `state_machine.init(self, "StateIdle")`.
+
+---
+
+## State Contract
+
+Any node can act as a state inside `StateMachineModule` by extending `State` and overriding:
+
+```gdscript
+func enter(actor: Node) -> void:
+    pass  # Called when the state becomes active. actor is the coordinator node.
+
+func exit() -> void:
+    pass  # Called when leaving the state.
+
+func tick(delta: float) -> void:
+    pass  # Called every physics frame while active.
+```
+
+Transition to another state from within `tick()` or in response to a signal:
+
+```gdscript
+state_machine.transition_to("StateChase")
+```
 
 ---
 
