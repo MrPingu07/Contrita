@@ -1,0 +1,86 @@
+[gd_scene format=4 uid="uid://cbaug50ace3hy"]
+
+[ext_resource type="PackedScene" uid="uid://bwcm1uuwwl8x3" path="res://entities/player/player.tscn" id="1_3hls8"]
+[ext_resource type="Texture2D" uid="uid://ucvteaixlpcx" path="res://icon.svg" id="2_hbghi"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_hn12h"]
+texture = ExtResource("2_hbghi")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
+5:1/0 = 0
+6:1/0 = 0
+7:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+4:2/0 = 0
+4:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+5:2/0 = 0
+6:2/0 = 0
+7:2/0 = 0
+0:3/0 = 0
+1:3/0 = 0
+2:3/0 = 0
+3:3/0 = 0
+4:3/0 = 0
+5:3/0 = 0
+6:3/0 = 0
+7:3/0 = 0
+0:4/0 = 0
+1:4/0 = 0
+2:4/0 = 0
+3:4/0 = 0
+4:4/0 = 0
+5:4/0 = 0
+6:4/0 = 0
+7:4/0 = 0
+0:5/0 = 0
+1:5/0 = 0
+2:5/0 = 0
+3:5/0 = 0
+4:5/0 = 0
+5:5/0 = 0
+6:5/0 = 0
+7:5/0 = 0
+0:6/0 = 0
+1:6/0 = 0
+2:6/0 = 0
+3:6/0 = 0
+4:6/0 = 0
+5:6/0 = 0
+6:6/0 = 0
+7:6/0 = 0
+0:7/0 = 0
+1:7/0 = 0
+2:7/0 = 0
+3:7/0 = 0
+4:7/0 = 0
+5:7/0 = 0
+6:7/0 = 0
+7:7/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_ihfcg"]
+physics_layer_0/collision_layer = 1
+physics_layer_0/collision_mask = 0
+sources/0 = SubResource("TileSetAtlasSource_hn12h")
+
+[node name="Level1" type="Node2D" unique_id=2113916302]
+
+[node name="Player" parent="." unique_id=103653394 instance=ExtResource("1_3hls8")]
+position = Vector2(10, 10)
+
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=23098815]
+tile_map_data = PackedByteArray("AAAAAAwAAAAEAAIAAAABAAwAAAAEAAIAAAACAAwAAAAEAAIAAAADAAwAAAAEAAIAAAAEAAwAAAAEAAIAAAAFAAwAAAAEAAIAAAAGAAwAAAAEAAIAAAAHAAwAAAAEAAIAAAAIAAwAAAAEAAIAAAAJAAwAAAAEAAIAAAAKAAwAAAAEAAIAAAALAAwAAAAEAAIAAAAMAAwAAAAEAAIAAAANAAwAAAAEAAIAAAAOAAwAAAAEAAIAAAAPAAwAAAAEAAIAAAALAAkAAAAEAAIAAAAEAAkAAAAEAAIAAAAIAAgAAAAEAAIAAAAHAAgAAAAEAAIAAAA=")
+tile_set = SubResource("TileSet_ihfcg")
